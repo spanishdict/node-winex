@@ -8,6 +8,16 @@ code of an HTTP response is captured).
 [winston]: https://github.com/flatiron/winston
 [express]: http://expressjs.com
 
+Install
+=======
+The usual
+
+    npm install winex
+
+Although Winex *uses* Winston, it does not actually *provide* winston - the
+caller must provide a configured Winston logger object. So you get to (and
+must) choose your own version of Winston to add as a project dependency.
+
 Middleware
 ==========
 Winex provides a basic middleware hook that attaches a Winston logger to
