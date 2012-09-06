@@ -114,7 +114,7 @@ factory = (winstonLogger, classMeta = {}) ->
     #
     @middlewareNop: ->
       (req, res, next) ->
-        req._log = Log.nopLogger
+        req.locals._log = Log.nopLogger
         next()
 
     # Middleware.
@@ -126,7 +126,7 @@ factory = (winstonLogger, classMeta = {}) ->
         log.addReq req
 
         # Attach to request.
-        req._log = log
+        req.locals._log = log
 
         # Proxy end (what connect.logger does).
         _end = res.end
@@ -135,7 +135,7 @@ factory = (winstonLogger, classMeta = {}) ->
           res.end(chunk, encoding)
 
           # Allow controllers to wipe out the object.
-          return unless res.req._log
+          return unless res.req.locals._log
 
           level = "info"
           if 400 <= res.statusCode < 500
