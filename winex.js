@@ -125,7 +125,7 @@
 
       Log.middlewareNop = function() {
         return function(req, res, next) {
-          req.locals._log = Log.nopLogger;
+          res.locals._log = Log.nopLogger;
           return next();
         };
       };
@@ -138,13 +138,15 @@
           var log, _end;
           log = new Log(opts);
           log.addReq(req);
-          req.locals._log = log;
+          console.log(res.locals);
+          console.log(req);
+          res.locals._log = log;
           _end = res.end;
           res.end = function(chunk, encoding) {
             var level, _ref;
             res.end = _end;
             res.end(chunk, encoding);
-            if (!res.req.locals._log) {
+            if (!res.locals._log) {
               return;
             }
             level = "info";
