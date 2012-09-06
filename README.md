@@ -7,3 +7,7 @@ code of an HTTP response is captured).
 
 [winston]: https://github.com/flatiron/winston
 [express]: http://expressjs.com
+
+License
+=======
+CakePop is Copyright 2012 Curiosity Media, Inc. Released under the MIT License.
