@@ -126,8 +126,6 @@ factory = (winstonLogger, classMeta = {}) ->
         log.addReq req
 
         # Attach to request.
-        console.log res.locals
-        console.log req
         res.locals._log = log
 
         # Proxy end (what connect.logger does).

@@ -138,8 +138,6 @@
           var log, _end;
           log = new Log(opts);
           log.addReq(req);
-          console.log(res.locals);
-          console.log(req);
           res.locals._log = log;
           _end = res.end;
           res.end = function(chunk, encoding) {
