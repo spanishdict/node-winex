@@ -172,6 +172,9 @@ factory = (winstonLogger, classMeta = {}) ->
       @meta = extend @meta,
         resStatus:      res.statusCode
 
+    addMeta: (meta = {}) ->
+      @meta = extend @meta, meta
+
     # Add error to instance meta.
     addError: (error = "unknown") ->
       errObj = errMsg: error?.message ? error.toString()

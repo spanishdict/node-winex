@@ -197,6 +197,13 @@
         });
       };
 
+      Log.prototype.addMeta = function(meta) {
+        if (meta == null) {
+          meta = {};
+        }
+        return this.meta = extend(this.meta, meta);
+      };
+
       Log.prototype.addError = function(error) {
         var errObj, _ref, _ref1, _ref2, _ref3;
         if (error == null) {
