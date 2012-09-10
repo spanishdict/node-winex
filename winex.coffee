@@ -1,3 +1,4 @@
+cluster   = require "cluster"
 os        = require "os"
 url       = require "url"
 
@@ -6,7 +7,7 @@ extend    = require "deep-extend"
 # Constants.
 HOST_NAME = os.hostname()
 WORKER_ID = do ->
-  wid = process.env.NODE_WORKER_ID
+  wid = process.env.NODE_WORKER_ID ? cluster.worker?.id ? null
   if wid then "w#{wid}" else "m"
 
 # Default internal logger until set by factory.
