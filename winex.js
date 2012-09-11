@@ -3,7 +3,8 @@
   var HOST_NAME, Handlers, WORKER_ID, clientIp, cluster, extend, factory, os, stripNulls, url, _Log,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   cluster = require("cluster");
 
@@ -95,11 +96,15 @@
     return ipAddr;
   };
 
-  factory = function(winstonLogger, classMeta) {
-    var Log;
+  factory = function(winstonLogger, classMeta, opts) {
+    var Log, NopLog, useNop;
     if (classMeta == null) {
       classMeta = {};
     }
+    if (opts == null) {
+      opts = {};
+    }
+    useNop = opts.nop === true;
     Log = (function() {
       var level, _fn, _i, _len, _ref,
         _this = this;
@@ -120,17 +125,9 @@
         if (opts.error) {
           this.addError(opts.error);
         }
-        this.nop = Log.nopLogger;
       }
 
       Log.prototype.DEFAULT_TYPE = "request";
-
-      Log.middlewareNop = function() {
-        return function(req, res, next) {
-          res.locals._log = Log.nopLogger;
-          return next();
-        };
-      };
 
       Log.middleware = function(opts) {
         if (opts == null) {
@@ -323,25 +320,43 @@
         _fn(level);
       }
 
-      Log.nopLogger = (function() {
-        var obj, _fn1, _j, _len1, _ref1;
-        obj = {};
-        _ref1 = Object.keys(winstonLogger.levels);
-        _fn1 = function(level) {
-          return obj[level] = function() {};
-        };
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          level = _ref1[_j];
-          _fn1(level);
-        }
-        return obj;
-      })();
-
       return Log;
 
     }).call(this);
+    NopLog = (function(_super) {
+      var level, _fn, _i, _len, _ref,
+        _this = this;
+
+      __extends(NopLog, _super);
+
+      function NopLog() {
+        return NopLog.__super__.constructor.apply(this, arguments);
+      }
+
+      NopLog.middleware = function() {
+        return function(req, res, next) {
+          res.locals._log = new NopLog();
+          return next();
+        };
+      };
+
+      _ref = Object.keys(winstonLogger.levels);
+      _fn = function(level) {
+        return NopLog.prototype[level] = function() {};
+      };
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        level = _ref[_i];
+        _fn(level);
+      }
+
+      return NopLog;
+
+    }).call(this, Log);
     _Log = Log;
-    return Log;
+    if (useNop === true) {
+      _Log = NopLog;
+    }
+    return _Log;
   };
 
   module.exports = {

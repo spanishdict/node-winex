@@ -87,9 +87,12 @@ clientIp = (req) ->
 #
 # Winex needs an instance of a Winston logger to wrap.
 #
-# @param [Object] winstonLogger Winston logger.
-# @param [Object] classMeta     Extra meta for every log call.
-factory = (winstonLogger, classMeta = {}) ->
+# @param        [Object] winstonLogger Winston logger.
+# @param        [Object] classMeta     Extra meta for every log call.
+# @param        [Object] opts          Extra meta for every log call.
+# @config opts  [Object] nop           Use NOP logger instead.
+factory = (winstonLogger, classMeta = {}, opts = {}) ->
+  useNop = opts.nop is true
 
   # Logger.
   #
@@ -105,18 +108,8 @@ factory = (winstonLogger, classMeta = {}) ->
       @addReq   opts.req    if opts.req
       @addError opts.error  if opts.error
 
-      # Make NOP available for switching.
-      @nop = Log.nopLogger
-
     # Default request type if not specified.
     DEFAULT_TYPE: "request"
-
-    # Nop middleware.
-    #
-    @middlewareNop: ->
-      (req, res, next) ->
-        res.locals._log = Log.nopLogger
-        next()
 
     # Middleware.
     #
@@ -266,19 +259,29 @@ factory = (winstonLogger, classMeta = {}) ->
           # Call the real logger.
           winstonLogger[meta.level].apply Log, [msg, meta, callback]
 
-    @nopLogger: do ->
-      obj = {}
-      for level in Object.keys winstonLogger.levels
-        do (level) ->
-          obj[level] = ->
 
-      obj
+  # NOP Logger.
+  #
+  class NopLog extends Log
+
+    # Nop middleware.
+    #
+    @middleware: ->
+      (req, res, next) ->
+        res.locals._log = new NopLog()
+        next()
+
+    # Dynamically add in the dummy log methods.
+    for level in Object.keys winstonLogger.levels
+      do (level) =>
+        @::[level] = ->
 
   # Set internal logger.
   _Log = Log
+  _Log = NopLog if useNop is true
 
   # Explicitly return created class.
-  Log
+  _Log
 
 module.exports =
   Handlers: Handlers
