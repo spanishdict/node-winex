@@ -18,21 +18,43 @@ _Log      = error: (args...) -> console.log.apply @, ["[ERROR]"].concat(args)
 ###############################################################################
 # Generic logging handlers.
 ###############################################################################
+uncaughtLogger = (err, cleanup = ->) ->
+  try
+    log = new _Log
+      type: "uncaught_exception"
+      error: err
+    log.error "Uncaught exception"
+  catch other
+    console.log (if err then (err.stack ? err) else "Unknown")
+    console.log "Error: Hit additional error logging the previous error."
+    console.log (if other then (other.stack ? other) else "Unknown")
+  finally
+    cleanup?()
+
 Handlers =
-  # Permissively trap uncaught exceptions.
+  # Only log uncaught exception. Cleanup must handled elsewhere.
   #
-  uncaughtException: (err) ->
-    try
-      log = new _Log
-        type: "uncaught_exception"
-        error: err
-      log.error "Uncaught exception"
-    catch other
-      console.log (if err then (err.stack ? err) else "Unknown")
-      console.log "Error: Hit additional error logging the previous error."
-      console.log (if other then (other.stack ? other) else "Unknown")
-    finally
+  logUncaughtException: (err) -> uncaughtLogger err
+
+  # Log uncaught exception and immediately kill process.
+  #
+  uncaughtException: (err) -> uncaughtLogger err, -> process.exit 1
+
+  # Returns server-aware handler that attempts to gracefully close server before
+  # killing process.
+  #
+  createUncaughtHandler: (server, opts = timeout: 30000) ->
+    kill = ->
       process.exit 1
+
+    (err) -> uncaughtLogger err, ->
+      timeout = setTimeout kill, opts.timeout
+      if server?
+        server.close ->
+          clearTimeout timeout
+          kill()
+      else
+        kill()
 
   # Return handler function for express exceptions.
   #
