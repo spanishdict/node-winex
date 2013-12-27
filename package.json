@@ -1,7 +1,7 @@
 {
   "name": "winex",
   "description": "Winston-based Express logging middleware.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Ryan Roemer <ryan@spanishdict.com>",
   "url": "https://github.com/spanishdict/node-winex",
   "main": "winex",
@@ -11,6 +11,9 @@
   "dependencies": {
     "async": "0.1.22",
     "deep-extend": "0.2.2"
+  },
+  "peerDependencies": {
+    "winston:": ">=0.6.2"
   },
   "devDependencies": {
     "coffee-script": "1.3.3",

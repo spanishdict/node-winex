@@ -335,23 +335,15 @@
 
       _ref = Object.keys(winstonLogger.levels);
       _fn = function(level) {
-        return Log.prototype[level] = function(msg, metaOrCb, cb) {
-          var callback, meta;
-          if (metaOrCb == null) {
-            metaOrCb = {};
+        return Log.prototype[level] = function(msg, meta, cb) {
+          if (meta == null) {
+            meta = {};
           }
           if (cb == null) {
-            cb = null;
-          }
-          if (cb != null) {
-            meta = metaOrCb != null ? metaOrCb : {};
-            callback = cb;
-          } else if (metaOrCb != null) {
-            meta = typeof metaOrCb === "object" ? metaOrCb : {};
-            callback = typeof metaOrCb === "function" ? metaOrCb : null;
+            cb = function() {};
           }
           meta = this._makeMeta(level, meta);
-          return winstonLogger[meta.level].apply(Log, [msg, meta, callback]);
+          return winstonLogger[meta.level].apply(Log, [msg, meta, cb]);
         };
       };
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {

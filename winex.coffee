@@ -266,20 +266,12 @@ factory = (winstonLogger, classMeta = {}, opts = {}) ->
     for level in Object.keys winstonLogger.levels
       # Need to wrap the invocation for safety / jshint.
       do (level) =>
-        @::[level] = (msg, metaOrCb = {}, cb = null) ->
-          # Params: 2nd, 3rd arguments switch for Winston. Parse out.
-          if cb?
-            meta      = metaOrCb ? {}
-            callback  = cb
-          else if metaOrCb?
-            meta      = if typeof metaOrCb is "object"   then metaOrCb else {}
-            callback  = if typeof metaOrCb is "function" then metaOrCb else null
-
+        @::[level] = (msg, meta = {}, cb = ->) ->
           # Create final meta.
           meta = @_makeMeta level, meta
 
           # Call the real logger.
-          winstonLogger[meta.level].apply Log, [msg, meta, callback]
+          winstonLogger[meta.level].apply Log, [msg, meta, cb]
 
 
   # NOP Logger.
