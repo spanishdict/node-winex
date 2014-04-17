@@ -200,7 +200,7 @@
       };
 
       Log.prototype.addReq = function(req) {
-        var maxChars, path, query, queryChars, urlObj, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+        var maxChars, path, pathLength, query, queryChars, urlObj, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
         if (req == null) {
           req = {};
         }
@@ -209,7 +209,8 @@
         path = urlObj != null ? urlObj.pathname : void 0;
         query = (_ref = urlObj != null ? urlObj.query : void 0) != null ? _ref : "";
         queryChars = query != null ? query.length : void 0;
-        if (path.length > maxChars) {
+        pathLength = (_ref1 = path != null ? path.length : void 0) != null ? _ref1 : 0;
+        if (pathLength > maxChars) {
           path = path.substr(0, maxChars);
         }
         if (queryChars > maxChars) {
@@ -217,12 +218,12 @@
         }
         return this.meta = extend(this.meta, stripNulls({
           reqClient: clientIp(req),
-          reqHost: (_ref1 = req != null ? (_ref2 = req.headers) != null ? _ref2.host : void 0 : void 0) != null ? _ref1 : null,
-          reqMethod: (_ref3 = req != null ? req.method : void 0) != null ? _ref3 : null,
+          reqHost: (_ref2 = req != null ? (_ref3 = req.headers) != null ? _ref3.host : void 0 : void 0) != null ? _ref2 : null,
+          reqMethod: (_ref4 = req != null ? req.method : void 0) != null ? _ref4 : null,
           reqPath: path,
           reqQuery: query,
           reqQueryChars: queryChars,
-          reqUser: (_ref4 = req != null ? (_ref5 = req.user) != null ? _ref5.email : void 0 : void 0) != null ? _ref4 : null
+          reqUser: (_ref5 = req != null ? (_ref6 = req.user) != null ? _ref6.email : void 0 : void 0) != null ? _ref5 : null
         }));
       };
 
