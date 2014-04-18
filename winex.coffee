@@ -171,7 +171,8 @@ factory = (winstonLogger, classMeta = {}, opts = {}) ->
       path        = urlObj?.pathname
       query       = urlObj?.query ? ""
       queryChars  = query?.length
-      path        = path.substr  0, maxChars if path.length > maxChars
+      pathLength  = path?.length ? 0
+      path        = path.substr  0, maxChars if pathLength > maxChars
       query       = query.substr 0, maxChars if queryChars > maxChars
 
       @meta = extend @meta, stripNulls({
