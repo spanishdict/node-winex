@@ -1,7 +1,7 @@
 {
   "name": "winex",
   "description": "Winston-based Express logging middleware.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Ryan Roemer <ryan@spanishdict.com>",
   "url": "https://github.com/spanishdict/node-winex",
   "main": "winex",
