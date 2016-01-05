@@ -187,7 +187,7 @@
             }
             level = "info";
             if ((400 <= (_ref = res.statusCode) && _ref < 500)) {
-              level = "warning";
+              level = "warn";
             }
             if (res.statusCode >= 500) {
               level = "error";

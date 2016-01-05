@@ -155,7 +155,7 @@ factory = (winstonLogger, classMeta = {}, opts = {}) ->
 
           level = "info"
           if 400 <= res.statusCode < 500
-            level = "warning"
+            level = "warn"
           if res.statusCode >= 500
             level = "error"
 
