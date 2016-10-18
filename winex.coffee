@@ -111,7 +111,7 @@ clientIp = (req) ->
 #
 # @param        [Object] winstonLogger Winston logger.
 # @param        [Object] classMeta     Extra meta for every log call.
-# @param        [Object] opts          Extra meta for every log call.
+# @param        [Object] opts          Extra options for every log call.
 # @config opts  [Object] nop           Use NOP logger instead.
 factory = (winstonLogger, classMeta = {}, opts = {}) ->
   useNop = opts.nop is true
@@ -128,6 +128,7 @@ factory = (winstonLogger, classMeta = {}, opts = {}) ->
 
       # Patch in incoming data.
       @addReq   opts.req    if opts.req
+      @addRes   opts.res    if opts.res
       @addError opts.error  if opts.error
 
     # Default request type if not specified.
@@ -158,6 +159,9 @@ factory = (winstonLogger, classMeta = {}, opts = {}) ->
             level = "warn"
           if res.statusCode >= 500
             level = "error"
+
+          # Allow overriding the level.
+          level = log.level if log.level?
 
           log.addRes res
           log[level] "request"

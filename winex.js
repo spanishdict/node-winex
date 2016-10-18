@@ -192,6 +192,9 @@
             if (res.statusCode >= 500) {
               level = "error";
             }
+            if (log.level != null) {
+              level = log.level;
+            }
             log.addRes(res);
             return log[level]("request");
           };
